@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画板2</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="//at.alicdn.com/t/font_1427956_2p5jdnf6k.js"></script>
+    <script>
+        window.onload = function () {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var lineWidth = 3;
+            var using = false;
+            var lastPoint = { x: undefined, y: undefined }
+
+            autoSetCanvasSize('canvas')
+            //特性检测，检测是有支持触摸效果
+            if (document.body.ontouchstart !== undefined) {
+                canvas.ontouchstart = function (aaa) {
+                    var x = aaa.touches[0].clientX;
+                    var y = aaa.touches[0].clientY;
+                    if (eraserOn) {
+                        using = true
+                        context.clearRect(x - 5, y - 5, 10, 10)
+                    } else {
+                        using = true
+                        lastPoint = { 'x': x, 'y': y }
+                    }
+                }
+                canvas.ontouchmove = function (aaa) {
+
+                    var x = aaa.touches[0].clientX;
+                    var y = aaa.touches[0].clientY;
+                    if (eraserOn) {
+                        if (using) {
+                            context.clearRect(x - 5, y - 5, 10, 10)
+                        }
+                    } else {
+                        if (using) {
+                            newPoint = { 'x': x, 'y': y }
+                            drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                            lastPoint = newPoint
+                        }
+                    }
+                }
+                canvas.ontouchend = function (aaa) {
+
+                    using = false
+                }
+            } else {  //如果判断不支持触摸效果则为PC端，则执行以下代码
+                //鼠标按下
+                canvas.onmousedown = function (aaa) {
+
+                    var x = aaa.clientX;
+                    var y = aaa.clientY;
+                    if (eraserOn) {
+                        using = true
+                        context.clearRect(x - 5, y - 5, 10, 10)
+                    } else {
+                        using = true
+                        lastPoint = { 'x': x, 'y': y }
+                    }
+                }
+                //鼠标移动
+                canvas.onmousemove = function (aaa) {
+
+                    var x = aaa.clientX;
+                    var y = aaa.clientY;
+                    if (eraserOn) {
+                        if (using) {
+                            context.clearRect(x - 5, y - 5, 10, 10)
+                        }
+                    } else {
+                        if (using) {
+                            newPoint = { 'x': x, 'y': y }
+                            drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                            lastPoint = newPoint
+                        }
+                    }
+                }
+
+                //鼠标松开
+                canvas.onmouseup = function () {
+
+                    using = false
+                }
+            }
+
+
+            /**************/
+
+            //画线
+            function drawLine(x1, y1, x2, y2) {
+
+                context.beginPath()
+                context.lineWidth = lineWidth
+                context.moveTo(x1, y1)
+                context.lineTo(x2, y2)
+                context.stroke()
+                context.closePath()
+            }
+            //画圆
+            function drawCircle(x, y, radius) {
+                context.beginPath()
+
+                context.arc(x, y, radius, 0, Math.PI * 2)
+                context.fill()
+            }
+            //橡皮擦
+            var eraserOn = false
+            eraser.onclick = function () {
+                eraserOn = true
+                eraser.classList.add('active')
+                pen.classList.remove('active')
+
+            }
+            pen.onclick = function () {
+                eraserOn = false
+                pen.classList.add('active')
+                eraser.classList.remove('active')
+
+            }
+            //设置canvas宽高
+            function autoSetCanvasSize() {
+                setCanvasSize()
+                window.onresize = function () {
+                    setCanvasSize()
+                }
+                function setCanvasSize() {
+                    var pageWidth = document.documentElement.clientWidth;
+                    var pageHeight = document.documentElement.clientHeight;
+                    canvas.width = pageWidth;
+                    canvas.height = pageHeight;
+                }
+            }
+            //设置画笔颜色
+            black.onclick = function () {
+                context.strokeStyle = 'black'
+                black.classList.add('active')
+                red.classList.remove('active')
+                green.classList.remove('active')
+                blue.classList.remove('active')
+            }
+            red.onclick = function () {
+                context.strokeStyle = 'red'
+                black.classList.remove('active')
+                red.classList.add('active')
+                green.classList.remove('active')
+                blue.classList.remove('active')
+            }
+            green.onclick = function () {
+                context.strokeStyle = 'green'
+                black.classList.remove('active')
+                red.classList.remove('active')
+                green.classList.add('active')
+                blue.classList.remove('active')
+            }
+            blue.onclick = function () {
+                context.strokeStyle = 'blue'
+                black.classList.remove('active')
+                red.classList.remove('active')
+                green.classList.remove('active')
+                blue.classList.add('active')
+            }
+            //设置画笔粗细
+            thin.onclick = function () {
+                lineWidth = 3;
+            }
+            thick.onclick = function () {
+                lineWidth = 6;
+            }
+            //清屏
+            clear.onclick = function () {
+                context.clearRect(0, 0, canvas.width, canvas.height)
+            }
+            download.onclick = function () {
+                var url = canvas.toDataURL("img/png");
+                var a = document.createElement('a');
+                document.body.appendChild(a);
+                a.href = url;
+                var x = prompt('随便取个名字~');
+                a.download = x;
+                a.click();
+                a.target = '_blank';
+            }
+
+        }
+    </script>
+</head>
+
+<body>
+    <canvas id="canvas" width=300 height=300></canvas>
+    <div class="actions" id="actions">
+        <!--画笔和橡皮擦-->
+        <svg id="pen" class="icon active">
+            <use xlink:href="#icon-pen"></use>
+        </svg>
+        <svg id="eraser" class="icon">
+            <use xlink:href="#icon-Eraser-Tool"></use>
+        </svg>
+        <!--清屏和保存-->
+        <svg id="clear" class="icon">
+            <use xlink:href="#icon-clear"></use>
+        </svg>
+        <svg id="download" class="icon">
+            <use xlink:href="#icon-down"></use>
+        </svg>
+    </div>
+    <!--画笔颜色-->
+    <ol class="colors">
+        <li id="black" class="black active"></li>
+        <li id="red" class="red "></li>
+        <li id="green" class="green"></li>
+        <li id="blue" class="blue"></li>
+    </ol>
+    <!--画笔粗细-->
+    <ol class="line">
+        <li id="thin" class="thin"></li>
+        <li id="thick" class="thick"></li>
+    </ol>
+
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+*{
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+body{
+    overflow:hidden;
+}
+.icon {
+    width: 1em; height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+ }
+ #actions svg{
+     margin:0 10px;
+     padding:5px;
+     width:2.5em;
+     height:2.5em;
+     transition: all 0.3s;
+ }
+#pen.active,#eraser.active{
+     color:rgb(21, 25, 243);
+     transform: scale(1.2);
+     
+ }
+#canvas{
+    background:white;
+    position:fixed;
+    top:0;
+    left:0;
+  }
+#actions{
+    position: fixed;
+    top:5px;
+    left:5px;
+}
+.colors{
+    position:fixed;
+    top:50px;
+    left:20px;
+    
+}
+.colors li{
+    width:20px;
+    height:20px;
+    margin:10px 0;
+    border-radius:50%;
+    transition: all 0.3s;
+}
+.colors li.black{
+    background: #000;
+}
+.colors li.red{
+    background: red;
+}
+.colors li.green{
+    background: green;
+}
+.colors li.blue{
+    background:blue;
+}
+.colors li.active{
+    box-shadow: 0px 0px 6px 5px #ebb6ba80;
+    transform:scale(1.2);
+    
+}
+.line {
+    
+    position:fixed;
+    top:15px;
+    right:20px;
+}
+
+.line .thin{
+    width:25px;
+    height:0;
+    border-top:5px solid black;
+    margin-bottom:20px;
+    
+}
+.line .thick{
+    width:25px;
+    height:0;
+    border-top:10px solid black;
+}
